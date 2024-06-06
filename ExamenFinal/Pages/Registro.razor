@@ -1,0 +1,109 @@
+﻿@page "/Registro"
+@inject HttpClient http
+@inject NavigationManager NavigationManager 
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+
+<h3>Registro productos </h3>
+
+<EditForm Model="@tablet" OnValidSubmit="@Guardar">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	@*Agregamos la informacion general del producto*@
+
+	<div class="form-group"> 
+		<label for="NoSerie">Numero Serie</label>
+		<InputNumber id="NoSerie" @bind-Value="tablet.NoSerie" class="form-control"/>
+	</div>
+	<div class="form-group">
+		<label for="Marca">Marca</label>
+		<InputText id="Marca" @bind-Value="tablet.Marca" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label for="Modelo">Modelo</label>
+		<InputText id="Modelo" @bind-Value="tablet.Modelo" class="form-control" />
+	</div>
+	@*Caracteristicas tablet*@
+	<div class="form-group">
+		<label for="TamanoPantalla">Tamano Pantalla</label>
+		<InputText id="TamanoPantalla" @bind-Value="tablet.TamanoPantalla" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label for="Soporte">Soporte Stylus</label>
+		<InputText id="Soporte" @bind-Value="tablet.Soporte" class="form-control" />
+	</div>
+
+	@*boton guardar*@
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary">Guardar</button>
+	</div>
+</EditForm>
+
+@if (tablets != null)
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Numero serie</th>
+				<th>Marca</th>
+				<th>Modelo</th>
+				<th>Tamano pantalla</th>
+				<th>Soporte</th>
+				<th>Editar</th>
+				<th>Eliminar</th>
+
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var tablet in tablets)
+			{
+				<tr>
+					<td>@tablet.NoSerie</td>
+					<td>@tablet.Marca</td>
+					<td>@tablet.Modelo</td>
+					<td>@tablet.TamanoPantalla</td>
+					<td>@tablet.Soporte</td>
+					<td>
+						<button class="btn btn-danger"
+								@onclick="@(() => Borrar(tablet.Modelo))">
+							Eliminar
+						</button>
+					</td>
+					<td>
+						<button class="btn btn-warning"
+								@onclick="@(() => NavigationManager.NavigateTo($"/Editar/{tablet.Modelo}"))">
+							Editar
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+
+@code {
+	private Tablets tablet = new Tablets();
+	List<Tablets> tablets = new List<Tablets>();
+
+	protected async Task Guardar()
+	{
+		tablets.Add(tablet);
+		tablet = new Tablets();
+	    await localStorage.SetItemAsync("tablets", tablets);
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		tablets = await localStorage.GetItemAsync<List<Tablets>>("tablets");
+	}
+
+	protected async Task Borrar(string Modelo)
+	{
+		tablets.Remove(tablets.First(c => c.Modelo== Modelo));
+		await localStorage.SetItemAsync("tablets", tablets);
+
+	}
+}

@@ -1,6 +1,6 @@
 ﻿namespace ExamenFinal
 {
-    public class Tablets
+    public class Tablets : Dispositivos
     {
         public string TamanoPantalla { get; set; }
 

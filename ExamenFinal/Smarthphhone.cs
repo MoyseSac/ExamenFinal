@@ -1,6 +1,6 @@
 ﻿namespace ExamenFinal
 {
-    public class Smarthphhone
+    public class Smarthphhone : Dispositivos
     {
         public string Sistema {  get; set; }
 

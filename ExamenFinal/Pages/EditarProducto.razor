@@ -1,0 +1,60 @@
+﻿@page "/Editar/{modelo}"
+@inject HttpClient http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<h3>Edicion Producto</h3>
+
+<EditForm Model="@tablet" OnValidSubmit="@Guardar">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	@*Agregamos la informacion general del producto*@
+
+	<div class="form-group">
+		<label for="NoSerie">Numero Serie</label>
+		<InputNumber id="NoSerie" @bind-Value="tablet.NoSerie" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label for="Marca">Marca</label>
+		<InputText id="Marca" @bind-Value="tablet.Marca" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label for="Modelo">Modelo</label>
+		<InputText id="Modelo" @bind-Value="tablet.Modelo" class="form-control" />
+	</div>
+	@*Caracteristicas tablet*@
+	<div class="form-group">
+		<label for="TamanoPantalla">Tamano Pantalla</label>
+		<InputText id="TamanoPantalla" @bind-Value="tablet.TamanoPantalla" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label for="Soporte">Soporte Stylus</label>
+		<InputText id="Soporte" @bind-Value="tablet.Soporte" class="form-control" />
+	</div>
+
+	@*boton guardar*@
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary">Guardar</button>
+	</div>
+</EditForm>
+
+@code {
+	[Parameter]
+	public string modelo{ get; set; }
+
+	private Tablets tablet = new Tablets();
+	List<Tablets> tablets = new List<Tablets>();
+
+	protected async Task Guardar()
+	{
+		await localStorage.SetItemAsync("tablets", tablets);
+		NavigationManager.NavigateTo("/Registro");
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		tablets = await localStorage.GetItemAsync<List<Tablets>>("tablets");
+		tablet = tablets.Find(c => c.Modelo== modelo);
+
+	}
+}
