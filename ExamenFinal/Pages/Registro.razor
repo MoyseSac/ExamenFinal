@@ -33,11 +33,12 @@
 		<label for="Soporte">Soporte Stylus</label>
 		<InputText id="Soporte" @bind-Value="tablet.Soporte" class="form-control" />
 	</div>
-
+	
 	@*boton guardar*@
 	<div class="form-group">
-		<button type="submit" class="btn btn-primary">Guardar</button>
+		<button type="submit" class="btn btn-primary"  >Guardar</button>
 	</div>
+	<p role="status">Productos registrados: @currentCount</p>
 </EditForm>
 
 @if (tablets != null)
@@ -84,6 +85,7 @@
 
 
 @code {
+	private int currentCount =0; 
 	private Tablets tablet = new Tablets();
 	List<Tablets> tablets = new List<Tablets>();
 
@@ -91,7 +93,8 @@
 	{
 		tablets.Add(tablet);
 		tablet = new Tablets();
-	    await localStorage.SetItemAsync("tablets", tablets);
+		await localStorage.SetItemAsync("tablets", tablets);
+		currentCount++;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -104,6 +107,6 @@
 	{
 		tablets.Remove(tablets.First(c => c.Modelo== Modelo));
 		await localStorage.SetItemAsync("tablets", tablets);
-
+		currentCount--;
 	}
 }
